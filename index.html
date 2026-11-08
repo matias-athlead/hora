@@ -2,8 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Soporte para modo Pantalla Completa en iOS (Safari) al añadir a inicio -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Reloj Estilo iOS</title>
+    
     <!-- Fuente Nunito para lograr el peso ultra grueso y bordes redondeados -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,9 +19,11 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
-        body {
+        html, body {
             background-color: #000;
             color: #fff;
             font-family: 'Nunito', system-ui, -apple-system, sans-serif;
@@ -27,17 +33,18 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            touch-action: manipulation;
         }
 
         /* Indicador de Batería */
         .battery-container {
             position: absolute;
-            top: 5vh;
-            right: 5vw;
-            width: clamp(40px, 6vw, 70px);
-            height: clamp(40px, 6vw, 70px);
+            top: clamp(20px, 5vh, 40px);
+            right: clamp(20px, 5vw, 40px);
+            width: clamp(42px, 7vw, 70px);
+            height: clamp(42px, 7vw, 70px);
             border-radius: 50%;
-            border: clamp(3px, 0.6vw, 7px) solid #30d158;
+            border: clamp(3px, 0.7vw, 7px) solid #30d158;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -52,7 +59,7 @@
         }
 
         .battery-text {
-            font-size: clamp(10px, 1.4vw, 18px);
+            font-size: clamp(11px, 1.5vw, 18px);
             font-weight: 900;
             color: #30d158;
         }
@@ -63,7 +70,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            width: 90vw;
+            width: 95vw;
             height: 80vh;
         }
 
@@ -71,7 +78,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(100px, 32vw, 420px);
+            font-size: clamp(90px, 32vw, 420px);
             font-weight: 900;
             line-height: 0.85;
             letter-spacing: -0.05em;
@@ -89,19 +96,19 @@
         .dots {
             display: flex;
             flex-direction: column;
-            gap: clamp(15px, 4.5vw, 60px);
-            margin: 0 clamp(5px, 1.5vw, 25px);
+            gap: clamp(12px, 4.5vw, 60px);
+            margin: 0 clamp(4px, 1.5vw, 25px);
             z-index: 5;
         }
 
         .dot {
-            width: clamp(18px, 4.5vw, 60px);
-            height: clamp(18px, 4.5vw, 60px);
+            width: clamp(16px, 4.5vw, 60px);
+            height: clamp(16px, 4.5vw, 60px);
             background-color: #d0d5dd;
             border-radius: 50%;
         }
 
-        /* Minutos en Azul Claro con Superposición Traslúcida */
+        /* Minutos en Azul Claro */
         .minutes {
             color: #4da6ff;
             opacity: 0.92;
@@ -111,38 +118,37 @@
             mix-blend-mode: screen;
         }
 
-        /* Botón de Pantalla Completa */
+        /* Botón de Pantalla Completa táctil */
         .fullscreen-btn {
             position: absolute;
-            bottom: 4vh;
-            right: 4vw;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #8e8e93;
-            padding: 10px 16px;
-            border-radius: 20px;
-            font-size: 14px;
+            bottom: clamp(20px, 4vh, 40px);
+            right: clamp(20px, 4vw, 40px);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: clamp(12px, 3.5vw, 16px);
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 20;
+            transition: opacity 0.3s ease;
         }
 
-        .fullscreen-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            color: #fff;
+        .fullscreen-btn:active {
+            background: rgba(255, 255, 255, 0.35);
         }
     </style>
 </head>
 <body>
 
-    <!-- Indicador de Batería Superior Derecho -->
+    <!-- Indicador de Batería -->
     <div class="battery-container" id="batteryContainer">
-        <!-- Rayo de Carga -->
         <svg class="battery-icon" id="lightningIcon" viewBox="0 0 24 24">
             <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
         </svg>
-        <!-- Porcentaje (oculto por defecto) -->
         <span class="battery-text" id="batteryText" style="display: none;">--</span>
     </div>
 
@@ -159,7 +165,7 @@
     </div>
 
     <!-- Botón Pantalla Completa -->
-    <button class="fullscreen-btn" id="fsBtn" onclick="toggleFullscreen()">Pantalla completa</button>
+    <button class="fullscreen-btn" id="fsBtn">Pantalla completa</button>
 
     <script>
         // Actualización de la Hora
@@ -198,29 +204,57 @@
             });
         }
 
-        // Modo Pantalla Completa
+        // Lógica universal de Pantalla Completa (Móvil y Escritorio)
+        const fsBtn = document.getElementById('fsBtn');
+
         function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {});
+            const doc = document.documentElement;
+            const isFS = document.fullscreenElement || document.webkitFullscreenElement;
+
+            if (!isFS) {
+                if (doc.requestFullscreen) {
+                    doc.requestFullscreen().catch(() => {});
+                } else if (doc.webkitRequestFullscreen) { /* Safari / iOS / Android Antiguos */
+                    doc.webkitRequestFullscreen();
+                }
             } else {
                 if (document.exitFullscreen) {
-                    document.exitFullscreen();
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
                 }
             }
         }
 
-        // Ocultar el botón si entra a pantalla completa
-        document.addEventListener('fullscreenchange', () => {
-            const btn = document.getElementById('fsBtn');
-            if (document.fullscreenElement) {
-                btn.style.opacity = '0';
-            } else {
-                btn.style.opacity = '1';
-            }
+        // Eventos táctiles para dispositivos móviles
+        fsBtn.addEventListener('click', toggleFullscreen);
+        fsBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            toggleFullscreen();
         });
 
-        // Permitir también doble clic en la pantalla para pantalla completa
-        document.body.addEventListener('dblclick', toggleFullscreen);
+        // Doble toque en cualquier parte de la pantalla para entrar/salir
+        let lastTap = 0;
+        document.body.addEventListener('touchend', function (e) {
+            if (e.target === fsBtn) return;
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 300 && tapLength > 0) {
+                toggleFullscreen();
+                e.preventDefault();
+            }
+            lastTap = currentTime;
+        });
+
+        // Ocultar o mostrar el botón según si está en pantalla completa
+        function handleFSChange() {
+            const isFS = document.fullscreenElement || document.webkitFullscreenElement;
+            fsBtn.style.opacity = isFS ? '0' : '1';
+            fsBtn.style.pointerEvents = isFS ? 'none' : 'auto';
+        }
+
+        document.addEventListener('fullscreenchange', handleFSChange);
+        document.addEventListener('webkitfullscreenchange', handleFSChange);
     </script>
 </body>
 </html>
